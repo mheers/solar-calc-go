@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -11,20 +12,17 @@ type Config struct {
 }
 
 func main() {
-
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: solarcalc <address>")
+		log.Fatal("Usage: solarcalc <address>")
 		os.Exit(1)
 	}
 
 	address := os.Args[1]
 
 	if len(address) < 10 {
-		fmt.Println("Address must be at least 10 characters long")
+		log.Fatal("Address must be at least 10 characters long")
 		os.Exit(1)
 	}
-
-	fmt.Println("SolarCalc")
 
 	config, err := getConfig()
 	if err != nil {
@@ -83,7 +81,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(j)
+	fmt.Println(string(j))
 }
 
 func getConfig() (*Config, error) {

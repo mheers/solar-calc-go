@@ -1,4 +1,6 @@
 .env
 solar-calc-go
+solarcalc
 results/
 __debug_bin*
+output.json
