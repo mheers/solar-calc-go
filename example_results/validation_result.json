@@ -1,0 +1,89 @@
+{
+    "address": {
+        "addressComponents": [
+            {
+                "componentName": {
+                    "languageCode": "de",
+                    "text": "Husener Straße"
+                },
+                "componentType": "route",
+                "confirmationLevel": "CONFIRMED"
+            },
+            {
+                "componentName": {
+                    "text": "51"
+                },
+                "componentType": "street_number",
+                "confirmationLevel": "CONFIRMED"
+            },
+            {
+                "componentName": {
+                    "text": "33098"
+                },
+                "componentType": "postal_code",
+                "confirmationLevel": "CONFIRMED"
+            },
+            {
+                "componentName": {
+                    "languageCode": "de",
+                    "text": "Paderborn"
+                },
+                "componentType": "locality",
+                "confirmationLevel": "CONFIRMED"
+            },
+            {
+                "componentName": {
+                    "languageCode": "de",
+                    "text": "Deutschland"
+                },
+                "componentType": "country",
+                "confirmationLevel": "CONFIRMED",
+                "inferred": true
+            }
+        ],
+        "formattedAddress": "Husener Straße 51, 33098 Paderborn, Deutschland",
+        "postalAddress": {
+            "addressLines": [
+                "Husener Str. 51"
+            ],
+            "languageCode": "de",
+            "locality": "Paderborn",
+            "postalCode": "33098",
+            "regionCode": "DE"
+        }
+    },
+    "geocode": {
+        "bounds": {
+            "high": {
+                "latitude": 51.7115004,
+                "longitude": 8.7609779
+            },
+            "low": {
+                "latitude": 51.7112468,
+                "longitude": 8.760462
+            }
+        },
+        "featureSizeMeters": 23.679739,
+        "location": {
+            "latitude": 51.711386,
+            "longitude": 8.7607221
+        },
+        "placeId": "ChIJAUEnUb9MukcRnh0Z7to2Ey8",
+        "placeTypes": [
+            "premise"
+        ],
+        "plusCode": {
+            "globalCode": "9F3CPQ66+H7"
+        }
+    },
+    "metadata": {
+        "residential": true
+    },
+    "verdict": {
+        "addressComplete": true,
+        "geocodeGranularity": "PREMISE",
+        "hasInferredComponents": true,
+        "inputGranularity": "PREMISE",
+        "validationGranularity": "PREMISE"
+    }
+}

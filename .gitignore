@@ -1,0 +1,4 @@
+.env
+solar-calc-go
+results/
+__debug_bin*
