@@ -1,19 +1,20 @@
-package main
+package api
 
 import (
 	"context"
 	"encoding/base64"
 	"os"
 
+	"github.com/mheers/solar-calc-go/models"
 	"google.golang.org/api/addressvalidation/v1"
 	"google.golang.org/api/option"
 )
 
-func GetAddressService(config *Config) (*addressvalidation.Service, error) {
+func GetAddressService(config *models.Config) (*addressvalidation.Service, error) {
 	return addressvalidation.NewService(context.Background(), option.WithAPIKey(config.APIKey))
 }
 
-func (sa *SolarAgent) validateAddress(address string) (*addressvalidation.GoogleMapsAddressvalidationV1ValidationResult, error) {
+func (sa *SolarAgent) ValidateAddress(address string) (*addressvalidation.GoogleMapsAddressvalidationV1ValidationResult, error) {
 	response, err := sa.addressService.V1.ValidateAddress(&addressvalidation.GoogleMapsAddressvalidationV1ValidateAddressRequest{
 		Address: &addressvalidation.GoogleTypePostalAddress{
 			AddressLines: []string{address},
@@ -25,12 +26,12 @@ func (sa *SolarAgent) validateAddress(address string) (*addressvalidation.Google
 	return response.Result, nil
 }
 
-func (sa *SolarAgent) getCoordinatesFromValidation(result *addressvalidation.GoogleMapsAddressvalidationV1ValidationResult) (float64, float64, error) {
+func (sa *SolarAgent) GetCoordinatesFromValidation(result *addressvalidation.GoogleMapsAddressvalidationV1ValidationResult) (float64, float64, error) {
 	return result.Geocode.Location.Latitude, result.Geocode.Location.Longitude, nil
 }
 
 // Save the validation result to a file
-func (sa *SolarAgent) saveValidationResult(address string, result *addressvalidation.GoogleMapsAddressvalidationV1ValidationResult) error {
+func (sa *SolarAgent) SaveValidationResult(address string, result *addressvalidation.GoogleMapsAddressvalidationV1ValidationResult) error {
 	addressB64 := base64.StdEncoding.EncodeToString([]byte(address))
 	fileName := "results/validation_result_" + addressB64 + ".json"
 	j, err := result.MarshalJSON()

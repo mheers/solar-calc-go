@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"context"
@@ -8,18 +8,19 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/mheers/solar-calc-go/models"
 	"google.golang.org/api/addressvalidation/v1"
 	"google.golang.org/api/option"
 	"google.golang.org/api/solar/v1"
 )
 
 type SolarAgent struct {
-	config         *Config
+	config         *models.Config
 	solarService   *solar.Service
 	addressService *addressvalidation.Service
 }
 
-func NewSolarAgent(config *Config) (*SolarAgent, error) {
+func NewSolarAgent(config *models.Config) (*SolarAgent, error) {
 	solarService, err := GetSolarService(config)
 	if err != nil {
 		return nil, err
@@ -37,7 +38,7 @@ func NewSolarAgent(config *Config) (*SolarAgent, error) {
 	}, nil
 }
 
-func GetSolarService(config *Config) (*solar.Service, error) {
+func GetSolarService(config *models.Config) (*solar.Service, error) {
 	return solar.NewService(context.Background(), option.WithAPIKey(config.APIKey))
 }
 
@@ -51,7 +52,7 @@ func (sa *SolarAgent) GetInsights(lat, long float64) (*solar.BuildingInsights, e
 	return insight, nil
 }
 
-func (sa *SolarAgent) saveInsight(address string, insight *solar.BuildingInsights) error {
+func (sa *SolarAgent) SaveInsight(address string, insight *solar.BuildingInsights) error {
 	addressB64 := base64.StdEncoding.EncodeToString([]byte(address))
 	fileName := "results/insights_" + addressB64 + ".json"
 	j, err := insight.MarshalJSON()
@@ -64,7 +65,7 @@ func (sa *SolarAgent) saveInsight(address string, insight *solar.BuildingInsight
 	return os.WriteFile(fileName, j, 0644)
 }
 
-func (sa *SolarAgent) getDataLayers(insight *solar.BuildingInsights) (*solar.DataLayers, error) {
+func (sa *SolarAgent) GetDataLayers(insight *solar.BuildingInsights) (*solar.DataLayers, error) {
 	dls := solar.NewDataLayersService(sa.solarService)
 	lat, long := insight.Center.Latitude, insight.Center.Longitude
 	dataLayers, err := dls.Get().LocationLatitude(lat).LocationLongitude(long).RadiusMeters(50).RequiredQuality("LOW").Do()
@@ -75,7 +76,7 @@ func (sa *SolarAgent) getDataLayers(insight *solar.BuildingInsights) (*solar.Dat
 	return dataLayers, nil
 }
 
-func (sa *SolarAgent) downloadGeoTiffs(address string, dataLayers *solar.DataLayers) error {
+func (sa *SolarAgent) DownloadGeoTiffs(address string, dataLayers *solar.DataLayers) error {
 	addressB64 := base64.StdEncoding.EncodeToString([]byte(address))
 	// gts := solar.NewGeoTiffService(sa.solarService) // TODO: this service is broken
 

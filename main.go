@@ -1,19 +1,17 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
-)
 
-type Config struct {
-	APIKey string
-}
+	"github.com/mheers/solar-calc-go/api"
+	"github.com/mheers/solar-calc-go/models"
+)
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal("Usage: solarcalc <address>")
+		log.Fatalf("Usage: %s <address>", os.Args[0])
 		os.Exit(1)
 	}
 
@@ -24,29 +22,29 @@ func main() {
 		os.Exit(1)
 	}
 
-	config, err := getConfig()
+	config, err := models.GetConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	solarAgent, err := NewSolarAgent(config)
+	solarAgent, err := api.NewSolarAgent(config)
 	if err != nil {
 		panic(err)
 	}
 
 	// validate address
-	validation, err := solarAgent.validateAddress(address)
+	validation, err := solarAgent.ValidateAddress(address)
 	if err != nil {
 		panic(err)
 	}
 
 	// save validation result
-	if err = solarAgent.saveValidationResult(address, validation); err != nil {
+	if err = solarAgent.SaveValidationResult(address, validation); err != nil {
 		panic(err)
 	}
 
 	// get coordinates from validation
-	lat, long, err := solarAgent.getCoordinatesFromValidation(validation)
+	lat, long, err := solarAgent.GetCoordinatesFromValidation(validation)
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +56,7 @@ func main() {
 	}
 
 	// save insights
-	err = solarAgent.saveInsight(address, insight)
+	err = solarAgent.SaveInsight(address, insight)
 	if err != nil {
 		panic(err)
 	}
@@ -82,15 +80,4 @@ func main() {
 	}
 
 	fmt.Println(string(j))
-}
-
-func getConfig() (*Config, error) {
-	apiKey := os.Getenv("GOOGLE_API_KEY")
-	if apiKey == "" {
-		return nil, errors.New("GOOGLE_API_KEY environment variable not set")
-	}
-
-	return &Config{
-		APIKey: apiKey,
-	}, nil
 }

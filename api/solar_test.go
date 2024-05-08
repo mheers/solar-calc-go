@@ -1,13 +1,14 @@
-package main
+package api
 
 import (
 	"testing"
 
+	"github.com/mheers/solar-calc-go/models"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetInsights(t *testing.T) {
-	config, err := getConfig()
+	config, err := models.GetConfig()
 	require.NoError(t, err)
 
 	solarAgent, err := NewSolarAgent(config)
@@ -18,12 +19,12 @@ func TestGetInsights(t *testing.T) {
 	require.NoError(t, err)
 
 	address := "Husener Str. 51, 33098 Paderborn"
-	err = solarAgent.saveInsight(address, insight)
+	err = solarAgent.SaveInsight(address, insight)
 	require.NoError(t, err)
 }
 
 func TestDownloadGeoTiffs(t *testing.T) {
-	config, err := getConfig()
+	config, err := models.GetConfig()
 	require.NoError(t, err)
 
 	solarAgent, err := NewSolarAgent(config)
@@ -35,9 +36,9 @@ func TestDownloadGeoTiffs(t *testing.T) {
 
 	address := "Husener Str. 51, 33098 Paderborn"
 
-	dataLayers, err := solarAgent.getDataLayers(insight)
+	dataLayers, err := solarAgent.GetDataLayers(insight)
 	require.NoError(t, err)
 
-	err = solarAgent.downloadGeoTiffs(address, dataLayers)
+	err = solarAgent.DownloadGeoTiffs(address, dataLayers)
 	require.NoError(t, err)
 }
