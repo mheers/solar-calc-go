@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"os"
 
 	"github.com/mheers/solar-calc-go/models"
@@ -27,6 +28,9 @@ func (sa *SolarAgent) ValidateAddress(address string) (*addressvalidation.Google
 }
 
 func (sa *SolarAgent) GetCoordinatesFromValidation(result *addressvalidation.GoogleMapsAddressvalidationV1ValidationResult) (float64, float64, error) {
+	if result == nil || result.Geocode == nil || result.Geocode.Location == nil || result.Geocode.Location.Latitude == 0 || result.Geocode.Location.Longitude == 0 {
+		return 0, 0, errors.New("no coordinates found")
+	}
 	return result.Geocode.Location.Latitude, result.Geocode.Location.Longitude, nil
 }
 
