@@ -44,7 +44,7 @@ func GetSolarService(config *models.Config) (*solar.Service, error) {
 
 func (sa *SolarAgent) GetInsights(lat, long float64) (*solar.BuildingInsights, error) {
 	bis := solar.NewBuildingInsightsService(sa.solarService)
-	insight, err := bis.FindClosest().LocationLatitude(lat).LocationLongitude(long).Do()
+	insight, err := bis.FindClosest().LocationLatitude(lat).LocationLongitude(long).RequiredQuality("MEDIUM").Do()
 	if err != nil {
 		return nil, err
 	}

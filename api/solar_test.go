@@ -14,7 +14,7 @@ func TestGetInsights(t *testing.T) {
 	solarAgent, err := NewSolarAgent(config)
 	require.NoError(t, err)
 
-	lat, long := 51.711386, 8.7607221 // paderborn
+	lat, long := 51.688034950865166, 8.692962059536352 // paderborn
 	insight, err := solarAgent.GetInsights(lat, long)
 	require.NoError(t, err)
 
