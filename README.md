@@ -22,6 +22,10 @@ cat output.json | jq 'del(.solarPotential.roofSegmentStats, .solarPotential.sola
 ```
 
 # TODO:
-- [ ] convert GeoTiff to COG and then to PNG - see
+- [ ] convert GeoTiff (https://developers.google.com/maps/documentation/solar/geotiff) to COG and then to PNG - see
     - https://www.cogeo.org/
+    - https://github.com/lukeroth/gdal (https://github.com/lukeroth/gdal/blob/master/examples/tiff/tiff.go)
+    - https://github.com/airbusgeo/godal
     - https://github.com/airbusgeo/cogger
+    - https://github.com/SvenPfiffner/GeoTiffConverter
+    - https://github.com/googlemaps-samples/js-solar-potential/blob/main/src/routes/layer.ts
