@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/mheers/solar-calc-go/models"
 	"google.golang.org/api/addressvalidation/v1"
@@ -76,7 +77,7 @@ func (sa *SolarAgent) GetDataLayers(insight *solar.BuildingInsights) (*solar.Dat
 	return dataLayers, nil
 }
 
-func (sa *SolarAgent) DownloadGeoTiffs(address string, dataLayers *solar.DataLayers) error {
+func (sa *SolarAgent) DownloadGeoTiffs(address string, dataLayers *solar.DataLayers) (map[string]string, error) {
 	addressB64 := base64.StdEncoding.EncodeToString([]byte(address))
 	// gts := solar.NewGeoTiffService(sa.solarService) // TODO: this service is broken
 
@@ -92,28 +93,60 @@ func (sa *SolarAgent) DownloadGeoTiffs(address string, dataLayers *solar.DataLay
 		urls[fmt.Sprintf("shade_%d", i)] = url
 	}
 
+	filePaths := make(map[string]string)
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(urls))
+
+	errs := []error{}
+
+	errors := make(chan error)
+
 	for name, url := range urls {
-		// download the file
-		url = url + "&key=" + sa.config.APIKey
-		resp, err := http.DefaultClient.Get(url)
-		if err != nil {
-			return err
-		}
-
-		// save the file
-		if err := os.MkdirAll("results/", 0755); err != nil {
-			return err
-		}
 		fileName := "results/" + addressB64 + "_" + name + ".tiff"
+		filePaths[name] = fileName
 
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
+		go func(name, url, fileName string) {
+			// download the file
+			url = url + "&key=" + sa.config.APIKey
+			resp, err := http.DefaultClient.Get(url)
+			if err != nil {
+				errors <- err
+				return
+			}
 
-		if err := os.WriteFile(fileName, data, 0644); err != nil {
-			return err
-		}
+			// save the file
+			if err := os.MkdirAll("results/", 0755); err != nil {
+				errors <- err
+				return
+			}
+
+			data, err := io.ReadAll(resp.Body)
+			if err != nil {
+				errors <- err
+				return
+			}
+
+			if err := os.WriteFile(fileName, data, 0644); err != nil {
+				errors <- err
+				return
+			}
+			wg.Done()
+		}(name, url, fileName)
+
 	}
-	return nil
+
+	wg.Wait()
+
+	select {
+	case err := <-errors:
+		errs = append(errs, err)
+	default:
+	}
+
+	if len(errs) > 0 {
+		return nil, errs[0]
+	}
+
+	return filePaths, nil
 }

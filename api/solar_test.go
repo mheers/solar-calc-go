@@ -39,6 +39,7 @@ func TestDownloadGeoTiffs(t *testing.T) {
 	dataLayers, err := solarAgent.GetDataLayers(insight)
 	require.NoError(t, err)
 
-	err = solarAgent.DownloadGeoTiffs(address, dataLayers)
+	images, err := solarAgent.DownloadGeoTiffs(address, dataLayers)
 	require.NoError(t, err)
+	require.NotEmpty(t, images)
 }

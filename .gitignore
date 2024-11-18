@@ -4,3 +4,10 @@ solarcalc
 results/
 __debug_bin*
 output.json
+gtiff/*.xml
+gtiff/*.png
+gtiff/*.tif
+gtiff/*.tiff
+gtiff/gtiff
+gtiff/python
+
